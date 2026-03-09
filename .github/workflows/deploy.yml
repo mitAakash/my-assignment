@@ -3,24 +3,23 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
-  
 
 jobs:
   ci-cd:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
+      # 1 Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js (for lint/test)
+      # 2️ Setup Node.js for frontend/backend lint & test
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '16'
 
-      # Step 3a: Lint & Test Frontend
+      # 3️ Lint & Test Frontend
       - name: Lint & Test Frontend
         run: |
           cd Task-/Mern-Frontend
@@ -28,7 +27,7 @@ jobs:
           npm run lint || true
           npm test || true
 
-      # Step 3b: Lint & Test Backend
+      # 4️ Lint & Test Backend
       - name: Lint & Test Backend
         run: |
           cd Task-/Mern-backend
@@ -36,25 +35,68 @@ jobs:
           npm run lint || true
           npm test || true
 
-      # Step 4: Docker Login
+      # 5️ Docker login
       - name: Docker Login
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 5: Build & Push Docker Images
-      - name: Build & Push Docker Images
+      # 6️ Build Docker images with commit SHA
+      - name: Build Docker Images
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t mitaakash/mern-frontend:latest Task-/Mern-Frontend
-          docker build -t mitaakash/mern-backend:latest Task-/Mern-backend
-          docker build -t mitaakash/lamp-app:latest Task-/PhP-Lamp
+          docker build -t mitaakash/mern-frontend:${IMAGE_TAG} Task-/Mern-Frontend
+          docker build -t mitaakash/mern-backend:${IMAGE_TAG} Task-/Mern-backend
+          docker build -t mitaakash/lamp-app:${IMAGE_TAG} Task-/PhP-Lamp
 
-          docker push mitaakash/mern-frontend:latest
-          docker push mitaakash/mern-backend:latest
-          docker push mitaakash/lamp-app:latest
+      # 7️ Push Docker images to Docker Hub
+      - name: Push Docker Images
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker push mitaakash/mern-frontend:${IMAGE_TAG}
+          docker push mitaakash/mern-backend:${IMAGE_TAG}
+          docker push mitaakash/lamp-app:${IMAGE_TAG}
 
-      # Step 6: Deploy to Staging
+      # 8️ Deploy to staging with Health Check & Auto-Rollback
       - name: Deploy to Staging
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          ssh -o StrictHostKeyChecking=no user@staging-server 'cd /path/to/Task- && ./setup.sh'
+          ssh -o StrictHostKeyChecking=no user@staging-server-ip '
+            cd /path/to/Task- &&
+
+            # Read last successful tag
+            LAST_TAG=$(cat last_successful.txt || echo "latest") &&
+
+            echo "Deploying new version: ${IMAGE_TAG}" &&
+
+            # Pull new images from Docker Hub
+            docker pull mitaakash/mern-frontend:${IMAGE_TAG} &&
+            docker pull mitaakash/mern-backend:${IMAGE_TAG} &&
+            docker pull mitaakash/lamp-app:${IMAGE_TAG} &&
+
+            # Stop old containers
+            docker compose down &&
+
+            # Start containers with new tag
+            IMAGE_TAG=${IMAGE_TAG} docker compose up -d &&
+
+            # Wait for containers to be ready
+            sleep 10 &&
+
+            # Health check (replace URL with your app endpoint)
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/public IP:3000/health || echo 0) &&
+
+            if [ "$STATUS" -ne 200 ]; then
+              echo "Deployment failed, rolling back..." &&
+              docker compose down &&
+              IMAGE_TAG=${LAST_TAG} docker compose up -d &&
+              exit 1
+            else
+              echo "${IMAGE_TAG}" > last_successful.txt &&
+              echo "Deployment succeeded!"
+            fi
+          '
