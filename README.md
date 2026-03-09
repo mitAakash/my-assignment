@@ -37,9 +37,9 @@ Ensure the following are installed on your Linux VM or local machine:
 
 task-1/
 
- frontend/ # React frontend
- backend/ # Node.js / Express API
- lamp/ # Apache + PHP + MySQL stack
+ frontend =  React frontend
+ backend =  Node.js / Express API
+ lamp =  Apache + PHP + MySQL stack
  docker-compose.yml # Multi-service orchestration
  setup.sh # Bootstrap script
  nginx/ # Reverse proxy configuration
