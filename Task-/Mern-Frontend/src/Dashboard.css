@@ -1,0 +1,104 @@
+.dashboard {
+  padding: 2.5rem;
+  background: #eef0f5;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #1e293b;
+}
+
+/* CARD GRID */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: white;
+  padding: 1.6rem;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: 0.25s;
+}
+
+/* TABLE */
+.user-hours-table {
+  background: white;
+  padding: 1.8rem;
+  border-radius: 18px;
+  margin-bottom: 2rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.user-hours-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-hours-table th,
+.user-hours-table td {
+  padding: 14px;
+  font-size: 15px;
+}
+
+.user-hours-table th {
+  background: #e0e7ff;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* ZEBRA ROWS */
+.user-hours-table tbody tr:nth-child(even) {
+  background: #f7f9fc;
+}
+
+/* CHART SECTION */
+.chart-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.chart-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.loader {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-top: 30px;
+  color: #64748b;
+}
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.export-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.export-btn:hover {
+  background: #1e40af;
+  transform: scale(1.05);
+}

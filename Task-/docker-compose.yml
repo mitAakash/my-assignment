@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+
+  # MongoDB for MERN stack
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  # MySQL for LAMP stack
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: legacydb
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # Node / Express Backend
+  backend:
+    build: ./Mern-backend
+    container_name: mern-backend
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/ProjectManagement
+    ports:
+      - "5000:5000"
+
+  # React Frontend served via Nginx
+  frontend:
+    build: ./Mern-Frontend
+    container_name: react-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+  # Legacy LAMP Stack
+  lamp:
+    build: ./PhP-Lamp
+    container_name: lamp-server
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:80"
+
+  # Reverse Proxy
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - lamp
+
+volumes:
+  mongo-data:
+  mysql-data:

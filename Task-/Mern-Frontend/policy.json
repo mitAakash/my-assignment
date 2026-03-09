@@ -1,0 +1,12 @@
+{
+  "Statement": [
+    {
+      "Resource": "https://media.moviezu.com/MOVIEZU/PROCESSED/*",
+      "Condition": {
+        "DateLessThan": {
+          "AWS:EpochTime": 1765468400
+        }
+      }
+    }
+  ]
+}
