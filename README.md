@@ -28,7 +28,7 @@ Ensure the following are installed on your Linux VM or local machine:
 
 - Docker  
 - Docker Compose  
-- Node.js (v16+) and npm  
+- Node.js (v20+) and npm  
 - Git  
 
 ---
@@ -97,3 +97,60 @@ docker logs <container_name>
 
 docker logs lamp-server
 docker logs backend
+
+# CI/CD Pipeline (GitHub Actions)
+# Overview
+
+# The pipeline automates:
+
+# Linting and testing frontend & backend
+
+# Building Docker images for each service
+
+# Pushing Docker images to Docker Hub
+
+# Deploying to the staging server
+
+# Health check and automatic rollback if deployment fails
+
+# Workflow Steps
+
+# Checkout Code – Pulls the repository.
+
+# Setup Node.js – Prepares Node.js environment for frontend/backend lint & tests.
+
+# Lint & Test – Runs npm lint and npm test for frontend & backend.
+
+# Docker Login – Authenticates with Docker Hub using secrets.
+
+# Build Docker Images – Tags images with Git commit SHA.
+
+# Push Docker Images – Uploads images to Docker Hub.
+
+# Deploy to Staging – Pulls images on the server, starts containers, performs health check, and rolls back if needed.
+
+# Rollback Strategy
+
+# Deployment reads last successful tag from last_successful.txt.
+
+# Pulls new Docker images and starts containers.
+
+# Performs health check on the MERN app.
+
+# If health check fails:
+
+# Stops failed containers
+
+# Starts previous working containers (rollback)
+
+# Exits pipeline
+
+# Updates last_successful.txt if deployment succeeds.
+
+# Notes
+
+# Server must have Docker, Docker Compose, and the updated docker-compose.yml at /path/to/task-1.
+
+# Deployment is fully automated via GitHub Actions; code is inside Docker images.
+
+# Future improvements: Blue-Green deployment for zero downtime, multi-stage builds, and integration tests.
