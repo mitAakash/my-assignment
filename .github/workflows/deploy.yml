@@ -48,7 +48,7 @@ jobs:
         run: |
           docker build -t mitaakash/mern-frontend:latest Task-/Mern-Frontend
           docker build -t mitaakash/mern-backend:latest Task-/Mern-backend
-          docker build -t mitaakash/lamp-app:latest Task-/Php-Lamp
+          docker build -t mitaakash/lamp-app:latest Task-/PhP-Lamp
 
           docker push mitaakash/mern-frontend:latest
           docker push mitaakash/mern-backend:latest
