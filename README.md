@@ -36,6 +36,7 @@ Ensure the following are installed on your Linux VM or local machine:
 ## Directory Structure
 
 task-1/
+
 ├─ frontend/ # React frontend
 ├─ backend/ # Node.js / Express API
 ├─ lamp/ # Apache + PHP + MySQL stack
